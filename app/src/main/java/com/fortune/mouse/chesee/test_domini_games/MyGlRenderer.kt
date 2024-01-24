@@ -7,7 +7,6 @@ import android.view.View
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-
 class MyGLRenderer : GLSurfaceView.Renderer, View.OnTouchListener {
 
     private var angleX: Float = 0.0f
@@ -30,19 +29,14 @@ class MyGLRenderer : GLSurfaceView.Renderer, View.OnTouchListener {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        // Инициализация OpenGL, если необходимо
+
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        // Вызываем native-метод, передавая углы поворота
         renderFrame(currentAngleX, currentAngleY, currentAngleZ)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES20.glViewport(0, 0, width, height)
-    }
-
-    fun onSurfaceChanged(width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
     }
 
@@ -57,7 +51,7 @@ class MyGLRenderer : GLSurfaceView.Renderer, View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
                 startX = event.x
                 startY = event.y
-                startZ = currentAngleZ // Сохраняем текущее значение по оси Z
+                startZ = currentAngleZ
             }
             MotionEvent.ACTION_MOVE -> {
                 val currentX = event.x
@@ -67,15 +61,14 @@ class MyGLRenderer : GLSurfaceView.Renderer, View.OnTouchListener {
                 val deltaY = currentY - startY
                 val deltaZ = currentZ - startZ
 
-                currentAngleX = angleX + deltaY * TOUCH_SCALE_FACTOR
-                currentAngleY = angleY + deltaX * TOUCH_SCALE_FACTOR
-                currentAngleZ = angleZ + deltaZ * TOUCH_SCALE_FACTOR
+                currentAngleX += deltaY * TOUCH_SCALE_FACTOR
+                currentAngleY += deltaX * TOUCH_SCALE_FACTOR
+                currentAngleZ += deltaZ * TOUCH_SCALE_FACTOR
 
                 setRotationAngles(currentAngleX, currentAngleY, currentAngleZ)
                 (view as GLSurfaceView).requestRender()
             }
             MotionEvent.ACTION_UP -> {
-                // Пользователь отпустил палец, сохраняем текущие углы
                 angleX = currentAngleX
                 angleY = currentAngleY
                 angleZ = currentAngleZ
